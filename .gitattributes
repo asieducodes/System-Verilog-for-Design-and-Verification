@@ -1,0 +1,2 @@
+*.do linguist-documentation=true
+*.sv linguist-language=SystemVerilog
