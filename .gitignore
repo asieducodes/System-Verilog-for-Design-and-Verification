@@ -1,0 +1,9 @@
+# QuestaSim / ModelSim
+sim/
+work/
+*_lib/
+transcript
+vsim.wlf
+modelsim.ini
+*.vcd
+*.wlf

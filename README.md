@@ -1,6 +1,6 @@
 # SystemVerilog: Design & Verification
 
-A hands-on learning repository for **SystemVerilog** covering both **RTL design** and **functional verification**. Concepts are studied from [ChipVerify](https://www.chipverify.com/) and every example is compiled and simulated with the **Cadence** toolchain (Xcelium / Incisive, with SimVision for waveform debug).
+A hands-on learning repository for **SystemVerilog** covering both **RTL design** and **functional verification**. Concepts are studied from [ChipVerify](https://www.chipverify.com/) and every example is compiled and simulated with the **Siemens EDA / Mentor Graphics QuestaSim** toolchain.
 
 Each topic gets a small, self-contained example with a testbench, so the repo works as both a study log and a quick reference.
 
@@ -25,7 +25,7 @@ Each topic gets a small, self-contained example with a testbench, so the repo wo
 - Build a solid foundation in synthesizable SystemVerilog RTL.
 - Learn class-based, constrained-random verification.
 - Progress toward UVM-style testbench architecture.
-- Get comfortable with the Cadence simulation and debug flow.
+- Get comfortable with the QuestaSim simulation, GUI, and debug flow.
 
 ---
 
@@ -33,19 +33,36 @@ Each topic gets a small, self-contained example with a testbench, so the repo wo
 
 ```text
 .
-├── 01_basics/              # Data types, operators, procedural blocks
-├── 02_design/              # RTL: combinational, sequential, FSMs, memories
-├── 03_interfaces/          # Interfaces, modports, clocking blocks
-├── 04_verification/        # Classes, randomization, mailboxes, generators
-├── 05_assertions/          # Immediate and concurrent assertions (SVA)
-├── 06_coverage/            # Covergroups, coverpoints, cross coverage
-├── 07_uvm/                 # UVM testbench components
-├── projects/               # Complete DUT + testbench mini-projects
-├── scripts/                # Run scripts and Makefiles
-└── README.md
+├── .gitignore               # Excludes work libraries, transcripts, and WLF logs
+├── README.md                # Main profile page
+├── 01_basics/               # Data types, operators, procedural blocks
+│   ├── arrays/              # Packed/unpacked, dynamic arrays, queues
+│   ├── data_types/          # logic, bit, byte, int, enums, structs
+│   └── procedural/          # always_comb, always_ff, always_latch
+├── 02_design/               # RTL: combinational, sequential, FSMs, memories
+│   ├── combinational/       # Muxes, decoders, ALUs
+│   ├── sequential/          # Registers, counters
+│   └── fsm/                 # Finite State Machines (Mealy/Moore)
+├── 03_interfaces/           # Interfaces, modports, clocking blocks
+│   ├── basic_interface/     # Simple wire bundling
+│   └── advanced_interface/  # Modports and clocking blocks
+├── 04_verification/         # Classes, randomization, mailboxes, generators
+│   ├── 01_classes/          # OOP, handles, inheritance
+│   ├── 02_randomization/    # rand, randc, constraint blocks
+│   └── 03_ipc/              # Mailboxes, semaphores, events
+├── 05_assertions/           # Immediate and concurrent assertions (SVA)
+│   ├── immediate/
+│   └── concurrent/          # SVA sequences and properties
+├── 06_coverage/             # Covergroups, coverpoints, cross coverage
+│   ├── code_coverage/
+│   └── functional_coverage/ # Covergroups, coverpoints, cross coverage
+├── 07_uvm/                  # UVM testbench components
+│   ├── components/          # Driver, Monitor, Agent, Scoreboard
+│   └── top/                 # UVM Test and Top module
+├── projects/                # Complete DUT + testbench mini-projects
+├── sim/                     # Dedicated run directory to isolate simulation clutter
+└── scripts/                 # Automation Tcl run scripts and Makefiles
 ```
-
-> Adjust folder names to match your actual layout.
 
 ---
 
@@ -74,9 +91,9 @@ Each topic gets a small, self-contained example with a testbench, so the repo wo
 
 | Tool | Purpose |
 |------|---------|
-| Cadence Xcelium | Compile, elaborate, and simulate |
-| Cadence SimVision | Waveform viewing and debug |
-| Cadence vManager (optional) | Regression and coverage management |
+| QuestaSim (vsim) | Compile, elaborate, and simulate HDL files [1] |
+| QuestaSim GUI / Wave window | Waveform viewing, schematic viewer, and interactive debug [1] |
+| VS Code | Source code editor (with SystemVerilog extension) |
 | Git / GitHub | Version control |
 
 ---
@@ -85,37 +102,35 @@ Each topic gets a small, self-contained example with a testbench, so the repo wo
 
 ### Prerequisites
 
-- Access to a Cadence installation with a valid license
-- A Linux environment with the Cadence tools on your `PATH`
+- Access to a QuestaSim / ModelSim installation with a valid license [1]
+- A terminal environment (Windows Powershell/CMD or Linux shell) with `vsim` added to the system `PATH`
 - Git
-
 
 ---
 
 ## Running a Simulation
 
-Single-step flow with Xcelium:
+### Using the Console (Isolated Sim Flow)
+To keep the source code folders clean, navigate to the `sim/` folder and launch the simulation in batch mode or GUI mode using Tcl commands:
 
 ```bash
-xrun -sv -access +rwc -gui design.sv tb.sv
+cd sim
+vlib work
+vlog -sv ../01_basics/data_types/design.sv ../01_basics/data_types/tb.sv
+vsim -c work.tb -do "run -all; quit"
 ```
 
-Common options:
+### Common QuestaSim Commands
 
-| Flag | Description |
+| Command / Flag | Description |
 |------|-------------|
-| `-sv` | Enable SystemVerilog |
-| `-access +rwc` | Read/write/connectivity access for debug |
-| `-gui` | Open SimVision |
-| `-uvm` | Enable UVM support |
-| `-coverage all` | Collect coverage |
-| `-seed random` | Randomize the simulation seed |
-
-Example with UVM and coverage:
-
-```bash
-xrun -sv -uvm -coverage all -covoverwrite +UVM_TESTNAME=my_test design.sv tb_top.sv
-```
+| `vlib work` | Creates a local physical work library directory |
+| `vlog -sv` | Compiles SystemVerilog source files |
+| `vsim -c` | Runs the simulator in command-line / batch mode |
+| `vsim -i` | Runs the simulator in interactive GUI mode |
+| `vsim -voptargs="+acc"` | Preserves visibility of internal signals for waveform debugging |
+| `restart -f` | Reloads modified compilation elements without closing the simulation environment |
+| `quit -sim` | Gracefully terminates the active simulation instance and frees resources |
 
 ---
 
@@ -136,7 +151,7 @@ xrun -sv -uvm -coverage all -covoverwrite +UVM_TESTNAME=my_test design.sv tb_top
 
 - [ChipVerify: SystemVerilog Tutorial](https://www.chipverify.com/systemverilog/systemverilog-tutorial)
 - [ChipVerify: UVM Tutorial](https://www.chipverify.com/uvm/uvm-tutorial)
-- Cadence Xcelium documentation (via Cadence Support)
+- Siemens EDA QuestaSim Documentation (via InfoHub / Questasim Help)
 - IEEE 1800: SystemVerilog Language Reference Manual
 
 ---
