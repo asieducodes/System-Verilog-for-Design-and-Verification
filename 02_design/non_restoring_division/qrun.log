@@ -1,0 +1,107 @@
+QuestaSim-64 qrun 2024.1 Utility 2024.02 Feb  1 2024
+Start time: 07:50:38 on Oct 07,2026
+qrun "+acc" -gui -debugdb -top -testbench typedefs.sv *.sv 
+** Warning: (qrun-12019) Incorrectly (or incompletely) specified option '-top': (Argument '-testbench' appears to be another switch).
+QuestaSim-64 vlog 2024.1 Compiler 2024.02 Feb  1 2024
+Start time: 07:50:39 on Oct 07,2026
+vlog typedefs.sv *.sv -work qrun.out/work -statslog qrun.out/stats_log -writesessionid "+qrun.out/top_dus" -csession=incr -csessionid=0 
+-- Skipping typedefs.sv
+-- Skipping component.sv
+-- Skipping controller.sv
+-- Skipping datapath.sv
+-- Compiling module testbench
+-- Skipping top.sv
+-- Skipping typedefs.sv
+
+Top level modules:
+	testbench
+End time: 07:50:39 on Oct 07,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 0
+QuestaSim-64 vopt 2024.1 Compiler 2024.02 Feb  1 2024
+** Warning: (vopt-10587) Some optimizations are turned off because the +acc switch is in effect. This will cause your simulation to run slowly. Please use -access/-debug to maintain needed visibility.
+Start time: 07:50:39 on Oct 07,2026
+vopt "+acc" -debugdb -findtoplevels C:/Users/asied/Desktop/SystemVerilog/non_restoring_division/qrun.out/work+0+ -work qrun.out/work -statslog qrun.out/stats_log -csession=incr -o qrun_opt_2 -csessionid=7 
+
+Top level modules:
+	testbench
+
+Analyzing design...
+-- Loading module testbench
+-- Loading module top
+-- Loading module controller
+-- Importing package pack_states
+-- Loading module datapath
+-- Loading module reg5
+-- Loading module shifter
+-- Loading module mux2x1_5bit
+-- Loading module reg4
+-- Loading module sign_extension
+-- Loading module adder_sub5
+-- Loading module mux2x1
+-- Loading module dec
+-- Loading module comp
+-- Loading module tristate_buff
+Incremental compilation check found 14 design-units (out of 15) may be reused.
+Optimizing 1 design-unit (inlining 0/18 module instances):
+-- Optimizing module testbench(fast)
+-- Processing module testbench(fast) for debug
+Optimized design name is qrun_opt_2
+End time: 07:50:39 on Oct 07,2026, Elapsed time: 0:00:00
+Errors: 0, Warnings: 1
+# Reading pref.tcl
+# //  Questa Sim-64
+# //  Version 2024.1 win64 Feb  1 2024
+# //
+# // Unpublished work. Copyright 2024 Siemens
+# //
+# // This material contains trade secrets or otherwise confidential information
+# // owned by Siemens Industry Software Inc. or its affiliates (collectively,
+# // "SISW"), or its licensors. Access to and use of this information is strictly
+# // limited as set forth in the Customer's applicable agreements with SISW.
+# //
+# // This material may not be copied, distributed, or otherwise disclosed outside
+# // of the Customer's facilities without the express written permission of SISW,
+# // and may not be used in any way not expressly authorized by SISW.
+# //
+# vsim -debugdb -lib qrun.out/work -wlf vsim.wlf -gui -statslog qrun.out/stats_log qrun_opt_2 -appendlog -l qrun.log -csession=incr -csessionid=6 
+# Start time: 07:50:44 on Oct 07,2026
+# Loading sv_std.std
+# Loading work.testbench(fast)
+# Loading work.top(fast)
+# Loading work.pack_states(fast)
+# Loading work.controller(fast)
+# Loading work.datapath(fast)
+# Loading work.reg5(fast)
+# Loading work.shifter(fast)
+# Loading work.mux2x1_5bit(fast)
+# Loading work.reg4(fast)
+# Loading work.sign_extension(fast)
+# Loading work.adder_sub5(fast)
+# Loading work.mux2x1(fast)
+# Loading work.dec(fast)
+# Loading work.comp(fast)
+# Loading work.tristate_buff(fast)
+# ** Note: (vsim-8900) Creating design debug database vsim.dbg.
+add wave sim:/testbench/*
+run
+# -------------------------------------------
+# [CALCULATION COMPLETED]
+# Inputs  => Dividend: 13 | Divisor: 3
+# Outputs => Quotient: 4 | Remainder: 1
+# STATUS  => PASS
+# -------------------------------------------
+# -------------------------------------------
+# [CALCULATION COMPLETED]
+# Inputs  => Dividend: 15 | Divisor: 3
+# Outputs => Quotient: 5 | Remainder: 0
+# STATUS  => PASS
+# -------------------------------------------
+# End time: 11:42:25 on Oct 07,2026, Elapsed time: 3:51:41
+# Errors: 0, Warnings: 0
+End time: 11:42:28 on Oct 07,2026, Elapsed time: 3:51:50
+*** Summary *********************************************
+    qrun: Errors:   0, Warnings:   1
+    vlog: Errors:   0, Warnings:   0
+    vopt: Errors:   0, Warnings:   1
+    vsim: Errors:   0, Warnings:   0
+  Totals: Errors:   0, Warnings:   2
