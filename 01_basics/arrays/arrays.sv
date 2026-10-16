@@ -198,6 +198,97 @@ $display("The first byte of regfile[2] is: %b",regfile[2][1]);
 end
 endmodule
 
+// Notes on Queues
+// Queues: Follows the FIFO operation
+// using classes for queues
+class MyFruit;
+    string name;
+function new(string name="Unknown");
+    this.name = name;
+    endfunction
+    endclass
+typedef string str_data[];
+module queue_tb;
+/*
+string       name_list [$];        // A queue of string elements
+bit [3:0]    data [$];             // A queue of 4-bit elements
+
+logic [7:0]  elements [$:127];     // A bounded queue of 8-bits with maximum size of 128 slots
+
+int  q1 [$] =  '{ 1, 2, 3, 4, 5 }; // Integer queue, initialize elements
+int  q2 [$];                       // Integer queue, empty
+int  tmp;                          // Temporary variable to store values
+
+tmp = q1 [0];                      // Get first item of q1 (index 0) and store in tmp
+tmp = q1 [$];                      // Get last item of q1 (index 4) and store in tmp
+q2  = q1;                          // Copy all elements in q1 into q2
+q1  = {};                          // Empty the queue (delete all items)
+
+q2[2] = 15;                        // Replace element at index 2 with 15
+q2.insert (2, 15);                 // Inserts value 15 to index# 2
+q2 = { q2, 22 };                   // Append 22 to q2
+q2 = { 99, q2 };                   // Put 99 as the first element of q2
+q2 = q2 [1:$];                     // Delete first item
+q2 = q2 [0:$-1];                   // Delete last item
+q2 = q2 [1:$-1];                   // Delete first and last item
+*/
+// Create a queue that can store "string" values
+string fruits[$]='{"orange","apple","kiwi"};
+MyFruit myfruit[$]; // queue for this instance
+string order[4] = '{"pawpaw","mangoes","strawberry","banana"};
+// A queue of type string data str_data
+str_data list[$];
+initial begin 
+//     foreach(fruits[i]) begin 
+//         $display("Fruits[%0d]: %s",i,fruits[i]);
+//     end
+//     $display("Elements in the fruits queue: %p",fruits);
+//     //fruits = {};
+//    // $display("Elements in the fruits queue after deleting: %p",fruits);
+//     $display("The current size: %0d", fruits.size());
+//     // Queue slicing:
+//     $display("First two elements: %p", fruits[0:$-1]);
+//     fruits[$+1] = "pineapple";
+//     $display("Elements in fruits: %p", fruits);
+//     //Queue methods
+//     fruits.insert(0,"avocado"); // inserting a value at index 0
+//     $display("Current elements: %p", fruits);
+//     fruits.push_back("guava"); // adding element at the back
+//     $display("Current elements: %p", fruits);
+//     fruits.push_front("watermelon"); // adding element in front
+//     $display("Current elements: %p", fruits);
+//     fruits.delete(4);
+//     $display("Current elements: %p", fruits);
+   // Create instances of the dynamic array with names
+    str_data marvel = '{"Spiderman", "Hulk", "Captain American"};
+    str_data dcWorld = '{"Superman", "Batman"};
+    // Pushing these names onto the queue created for the dynamic array
+    list.push_back(marvel);
+    list.push_back(dcWorld);
+    foreach(list[i]) begin 
+        foreach(list[i][j]) begin
+            $display("List[%0d][%0d]: %s", i,j,list[i][j]);
+        end 
+        end
+end
+endmodule
+
+// creating queue of dynamic arrays
+
+// unbounded queue of int 
+int expected_q[$];
+int my_values[];
+module queue_ex;
+// Exercise on Queues
+initial begin 
+    expected_q.push_back(10);
+    expected_q.push_back(20);
+    expected_q.push_back(30);
+    while (expected_q.size() != 0) begin
+        $display("Popped Value: %0d",expected_q.pop_front());
+    end 
+end
+endmodule
 
 
 
