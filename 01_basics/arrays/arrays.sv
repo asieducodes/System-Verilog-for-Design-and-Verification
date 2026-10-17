@@ -291,7 +291,94 @@ end
 endmodule
 
 
+// Associative Array: data type sits in the square brackets
+// module ass_arr;
+// int arr1[int]; // an int arr with int index
+// int arr2[string]; // an int arr with string index
+// string arr3[string]; // str arr with str index
+// int aa_array[int];
+// int fruits_lo[string];
+// int fruits[string];
+// initial begin
+//     int idx;
+//     arr1 = '{1:22};
+//     arr2 = '{"Rose":100,"Joey":200,"John":400};
+//     arr3 = '{"Student":"Seth","Teacher":"Prof. Kommey","Friend":"Theodora"};
+//     // Associative Arrays 
+    
+//      // Initialized indices in a mixed order, not 1,2,5,8
+//     aa_array[5] = 20;
+//     aa_array[8] = 10;
+//     aa_array[1] = 50;
+//     aa_array[2] = 100;
+  
+//     // find the next index whose value is > 0
+//     aa_array.next(idx); 
+//     $display("aa_array[%0d] = %0d",idx,aa_array[idx]);
+//     aa_array.next(idx);
+//     $display("aa_array[%0d] = %0d",idx, aa_array[idx]);
+//     fruits_lo='{"mangoes":20,"apples":40,"bananas":100,"guava":200};
+//     if(fruits_lo.exists("mangoes")) 
+//     $display("Mangoes are available to be purchased from");
+//     $display("Number of fruits: %0d",fruits_lo.num());
+//     begin 
+//         string f;
+//         if(fruits_lo.first(f))
+//         $display("fruits_lo[%s]: %0d",f,fruits_lo[f]);
+//     end
+//     // last() : Get the last element in the array
+//     begin
+//     string f;
+//     if (fruits_l0.last (f))
+//         $display ("fruits_l0.last [%s] = %0d", f, fruits_l0[f]);
+//     end
+
+//     // prev() : Get the previous element in the array
+//     begin
+//     string f = "orange";
+//     if (fruits_l0.prev (f))
+//         $display ("fruits_l0.prev [%s] = %0d", f, fruits_l0[f]);
+//     end
+
+//     // next() : Get the next item in the array
+//     begin
+//     string f = "orange";
+//     if (fruits_l0.next (f))
+//         $display ("fruits_l0.next [%s] = %0d", f, fruits_l0[f]);
+//     end
+//       // Create a dynamic array with size 2
+//     fruits = new [2];
+
+//     // Initialize the associative array inside each dynamic array index
+//     fruits [0] = '{ "apple" : 1, "grape" : 2 };
+//     fruits [1] = '{ "melon" : 3, "cherry" : 4 };
+
+//     // Iterate through each index of dynamic array
+//     foreach (fruits[i])
+//       // Iterate through each key of the current index in dynamic array
+//       foreach (fruits[i][fruit])
+//         $display ("fruits[%0d][%s] = %0d", i, fruit, fruits[i][fruit]);
+
+// end
 
 
+// endmodule
 
+// module exercise
+module exercise_2;
+int reg_arr[string];
 
+initial begin
+    // initialize the array
+    reg_arr = '{"CTRL":'h10,"STATUS":'h14,"DATA":'h18};
+    if(reg_arr.exists("CTRL"))
+    $display("CTRL found at position: %0h",reg_arr["CTRL"]);
+    begin
+        string name;
+        if(reg_arr.first(name))
+        $display("The first value is: %0h",reg_arr[name]);
+        while(reg_arr.next(name))
+        $display("The first value is: %0h",reg_arr[name]);
+    end
+end
+endmodule
