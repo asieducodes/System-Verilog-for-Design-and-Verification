@@ -382,3 +382,41 @@ initial begin
     end
 end
 endmodule
+
+// Streaming Operators in German
+module tb;
+// packing a struct into a byte queue
+typedef struct packed{
+    byte addr;
+    byte code;
+    byte payload;
+}pkt_t;
+initial begin 
+    byte channel[$]; // the byte-wide channel
+    byte pkt_bytes[$];
+    pkt_t p,rx;
+    byte rx_bytes[$];
+    // packing the struct
+    int j = {"A","B","C","D"};
+    bit [31:0] s1 = {>> {j} }; // same order
+    bit[31:0] s2 = {<<byte {j}};
+    bit [31:0] s3 = {<<16 {j}};
+    $display("j = 0x%0h", j);
+    $display("s1 = 0x%0h",s1);
+    $display("s2 = 0x%0h",s2);
+    $display("s3 = 0x%0h",s3);
+    p = '{addr: 8'hA0, code: 8'h3C, payload: 8'hFF};
+    pkt_bytes = {>>{p}};
+    channel = {channel,pkt_bytes};
+    $display("p        = 0x%0h", p);
+    $display("channel  = 0x%0h 0x%0h 0x%0h", channel[0], channel[1], channel[2]);
+
+    // Receive: pop 3 bytes back off the channel and unpack them into a struct
+    rx_bytes = { channel[0], channel[1], channel[2] };
+    { >> byte { rx } } = rx_bytes;
+
+    $display("rx.addr    = 0x%0h", rx.addr);
+    $display("rx.code    = 0x%0h", rx.code);
+    $display("rx.payload = 0x%0h", rx.payload);
+end
+endmodule
