@@ -78,3 +78,17 @@ end
 
 
 endmodule 
+
+// ex3: on picking a random address 
+module pick_multiple_4;
+int tries;
+int unsigned num;
+//bit my_checker;
+initial begin
+do begin 
+    num = $urandom_range(0,63);
+    tries++;
+end while(num % 4 != 0);
+$display("Had %0d after %0d number of tries",num,tries);
+end
+endmodule
