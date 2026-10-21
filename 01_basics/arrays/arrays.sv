@@ -420,3 +420,22 @@ initial begin
     $display("rx.payload = 0x%0h", rx.payload);
 end
 endmodule
+
+// Forever Loop
+// Quiz: Generate 200MHz and finish on the 20th rising edge 
+
+module gen_200_mhz;
+bit clk;
+
+// generating the clk cycles 200MHz = 1/200 = 5ns ( 2.5 ns for rising edge)
+always #2.5 clk = ~clk;
+
+initial begin 
+    forever begin 
+        repeat(20) @(posedge clk);
+        $finish;
+    end
+end
+
+
+endmodule
