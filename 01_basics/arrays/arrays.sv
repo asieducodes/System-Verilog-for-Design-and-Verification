@@ -439,3 +439,207 @@ end
 
 
 endmodule
+
+// Using the Unique, Unique0, Priority
+
+module Unique_tb;
+int x = 4;
+bit[1:0] abc;
+initial begin 
+// // using the unique if 
+// unique if(x == 3 ) $display("The value: %0d",x);
+// else if (x == 5) $display("The value: %0d",x);
+// else $display("Neither 3 or 5 matched the expected value");
+
+// 2. Case two
+    abc = 0;
+    unique case(abc) 
+        0: $display("Found to be 0");
+        0: $display("Again found to be 0");    
+        2: $display("Found to be 2");
+    endcase
+     abc = 11;
+    priority case(abc) 
+        0: $display("Found to be 0");
+        0: $display("Again found to be 0");    
+        2: $display("Found to be 2");
+    endcase
+end
+
+endmodule 
+
+
+typedef enum logic[1:0] {IDLE, READ, WRITE} state_t;
+
+module ctrl_decode(
+input state,
+output logic rd_en, wr_en);
+
+
+always_comb begin 
+rd_en = 1'b0;
+wr_en = 1'b0;
+
+unique case(state)
+IDLE : ;
+READ : rd_en = 1'b1;
+WRITE : wr_en = 1'b1;
+
+endcase
+end
+
+endmodule
+
+
+// Always blocks 
+
+module alu_4_bit(
+    input logic[3:0] a,b,
+    input logic[1:0] op_code,
+    output logic[3:0] result
+);
+// Combinaitional logic block
+always_comb begin 
+    case(op_code) 
+    2'b00: result = a + b; // addition
+    2'b01: result = a - b; // subtraction
+    2'b10: result = a & b; // bitwise AND
+    2'b11: result = a | b; // bitwise OR
+    endcase
+end
+
+endmodule
+
+//2. always_latch
+
+module data_selector_with_latch(
+    input wire a_in,b_in,sel,enable,
+    output reg data_out
+);
+// Intermdiate signals
+wire mux_out;
+// combinational part of the circuit
+assign mux_out = sel ? a_in : b_in;
+
+// Sequential part, the latch for the value
+always_latch begin 
+    if(enable) begin 
+        data_out = mux_out;
+    end
+end
+
+endmodule
+
+module sync_counter_3bit (
+    input  wire clk,
+    input  wire reset_n, // Active-low reset
+    output reg  [2:0] count
+);
+
+    // This is the sequential always block, triggered on a clock edge
+    always_ff @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            // Asynchronous reset: sets the count to 0 when reset_n is low
+            count <= 3'b000;
+        end else begin
+            // On the positive edge of the clock, increment the count
+            count <= count + 1'b1;
+        end
+    end
+
+endmodule
+
+// A 4 bit counter with an active low 
+
+module counter_4bit(
+   // input logic[3:0] n_in,
+    input logic clk,rst_n,en,
+    output logic[3:0] n_out
+);
+    logic[3:0] cnt_sig;
+// next value with always_comb
+    always_comb begin 
+        cnt_sig = n_out;
+        if(en) cnt_sig = n_out + 4'd1;
+    end
+// sequential block
+always_ff @(posedge clk or negedge rst_n) begin 
+    if(!rst_n) n_out <= '0;
+    else n_out<=cnt_sig;
+end
+endmodule
+
+// Testbench for simulating the code 
+
+module counter_en_tb;
+// signal declarations
+logic clk;
+logic rst_n;
+logic en;
+logic[3:0] count;
+// instantiating the DUT
+
+counter_4bit DUT(
+    .clk,
+    .en,
+    .rst_n,
+    .n_out(count)
+);
+
+// clock generation
+ initial begin
+    // Initialize all input signals immediately at time 0
+    en    = 0;
+    rst_n = 1;
+    #1; // Short delay before asserting reset to prevent race conditions
+    
+    // 1. Apply active-low reset and release it after some time
+    $display("[TB] Asserting Asynchronous Reset...");
+    rst_n = 0; 
+    #25;        // Hold reset active across a clock edge
+    rst_n = 1;  // Release reset
+    $display("[TB] Reset Released.");
+    
+    // 2. Drive the 'en' signal high to let it count
+    // Best Practice: Drive inputs on the falling edge to avoid setup violations
+    @(negedge clk); 
+    $display("[TB] Enabling counter...");
+    en = 1;
+    
+    // Let it count for 5 clock cycles
+    repeat(5) @(posedge clk);
+    
+    // 3. Drive 'en' low to see if it holds its value
+    @(negedge clk);
+    $display("[TB] Disabling counter (Hold Mode)...");
+    en = 0;
+    
+    // Hold for 3 cycles
+    repeat(3) @(posedge clk);
+    
+    // 4. Assert reset again mid-count to see if it's asynchronous
+    #5; // Intentionally assert reset completely away from a clock edge
+    $display("[TB] Testing Asynchronous Reset mid-cycle...");
+    rst_n = 0;
+    #15;
+    rst_n = 1;
+    
+    // Re-enable and let it count a bit more
+    @(negedge clk);
+    en = 1;
+    repeat(3) @(posedge clk);
+    
+    // Wait a few cycles and finish simulation
+    repeat(5) @(posedge clk);
+    $display("[TB] Simulation finished successfully!");
+    $finish;
+  end
+
+  // ==========================================
+  // 5. Monitor Outputs
+  // ==========================================
+  initial begin
+    $monitor("Time=%tns | rst_n=%b | en=%b | count=%d (hex:%h binary:%b)", 
+             $time, rst_n, en, count, count, count);
+  end
+endmodule
