@@ -163,3 +163,45 @@ end
 
 
 endmodule
+
+// Parameterize with the value size
+class something #(int size = 8);
+    bit[size-1:0] out;
+endclass
+// Parameterizing data type
+class stack #(type T = int );
+    T item;
+    function T add_a(T a);
+         return a + item;
+    endfunction
+endclass
+module param_tb;
+//override default values
+    something #(16) sth1;
+    something #(.size(8)) sth2;
+    typedef something #(4) tb_nibble;
+    tb_nibble nibble;
+    stack #() st;
+    stack #(bit[3:0]) bs;
+    stack #(real) rs;
+initial begin 
+// instantiating them
+    sth1 = new;
+    sth2 = new;
+    nibble = new;
+    // print size of out 
+    $display("sth1.out = %0d bits", $bits(sth1.out));
+    $display("sth2.out = %0d bits", $bits(sth2.out));
+    $display("nibble.out = %0d bits", $bits(nibble.out));
+    // instantiate it
+    st = new;
+    bs = new;
+    rs = new;
+    //Assign different values to it
+    st.item = -456;
+      $display ("st.item = %0d", st.add_a (10));
+
+      bs.item = 8'hAF;
+      $display ("bs.item = %0d", bs.add_a (10));
+
+      rs.item = 3.14;
