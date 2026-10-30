@@ -205,3 +205,32 @@ initial begin
       $display ("bs.item = %0d", bs.add_a (10));
 
       rs.item = 3.14;
+
+
+// Static and Dynamic Casting of the values and expressions using $cast and data'{}
+// Using the cast 
+typedef enum { NULL=0, PENNY=1, FIVECENTS=5, DIME=10, QUARTER=25, DOLLAR=100 } Cents;
+
+module tb1;
+	Cents 	myCent;
+    bit[31:0] wide = 32'hface_dead;
+    bit[15:0] narrow;
+    initial begin 
+    if($cast(myCent,75)) begin
+        $display("Cast passed");
+	end
+    else $display("Cast failed");
+    if($cast(myCent,50)) begin
+        $display("Cast passed");
+	end
+    else $display("Cast failed");
+    // Static casting with the colon 
+    $display("The data here: %0d",int'("World"));
+    $display("The result of this computation is: %0d", int'(3.4 + 2 * 1.5));
+    // Casting the Wider bit to shorter bit
+    narrow = 16'(wide);
+    $display("narrow = 0x%0h", narrow);
+    $display("The string integer form of Verilog is: %0d",int'("Verilog"));
+    $display("Seth: %0d and %0d", int'("Seth"), int'("OSeth"));
+    end
+endmodule
