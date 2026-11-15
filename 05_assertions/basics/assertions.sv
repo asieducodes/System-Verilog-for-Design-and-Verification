@@ -90,35 +90,60 @@
 //     end
 // endmodule
 
-class my_class;
-    bit a,b,c;
-    //bit clk;
+// class my_class;
+//     bit a,b,c;
+//     //bit clk;
 
-    constraint c_abc{
-        a == 1; c==1;
-    }
+//     constraint c_abc{
+//         a == 1; c==1;
+//     }
 
 
-endclass
+// endclass
 
+// module tb; 
+// bit a, b, c;
+// my_class mc;
+// // clk generation
+// bit clk;
+// always #10 clk = ~clk;
+// initial begin 
+// mc = new;
+// for(int i=0; i<10; i++) begin 
+//     @(posedge clk);
+//     a <= $random;
+//     b <= $random;
+//     c <= $random;
+//     $display("[%t] a: %b, b: %b, c:%b", $time, a, b, c);
+// end
+// #10 $finish;
+// end
+// assert property(@(posedge clk) !(!a ^ b) ); // simply means a != b
+// endmodule
+
+// A simple Sequence
 module tb; 
-bit a, b, c;
-my_class mc;
-// clk generation
-bit clk;
-always #10 clk = ~clk;
-initial begin 
-mc = new;
-for(int i=0; i<10; i++) begin 
-    @(posedge clk);
-    a <= $random;
-    b <= $random;
-    c <= $random;
-    $display("[%t] a: %b, b: %b, c:%b", $time, a, b, c);
-end
-#10 $finish;
-end
-assert property(@(posedge clk) !(!a ^ b) ); // simply means a != b
+    bit a, clk;
+    // sequence that a should be high on every posedge
+    // sequence a_seq; 
+    //     @(posedge clk) a;
+    // endsequence
+    // using the $rose()
+    sequence a_seq;
+       // @(posedge clk) $rose(a);
+       //  @(posedge clk) $fell(a);
+       @(posedge clk) $stable(a);
+    endsequence
+    // assert the property
+   
+    always #10 clk = ~clk;
+    initial begin 
+        for(int i=0; i<10; i++) begin 
+            a = $random;
+            $display("[%0t], a: %0d", $time, a);
+            @(posedge clk);
+        end
+        #20 $finish;
+    end
+     assert property(a_seq);
 endmodule
-
-
