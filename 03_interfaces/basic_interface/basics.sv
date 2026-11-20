@@ -52,3 +52,4 @@ initial begin
 end
 
 endmodule
+// How it is synthesized
