@@ -327,3 +327,63 @@ myBus #(.D_WIDTH(8)) mybus(clk);
 
 
 endmodule
+
+// Declaring a type parameter: to be able to use different types
+// declared with parameter type
+module generic_reg #(
+  parameter type T = logic[7:0],
+  parameter T RESET_VAL = '0
+)(
+  input logic clk,
+  input logic rst_n,
+  input logic en,
+  input T d,
+  output T q
+);
+always @(posedge clk)
+  if(!rst_n) q <=RESET_VAL;
+  else if(en) q <= d;
+
+endmodule
+// Overriding the parameter type at instantiation
+module top(
+  logic clk, en, rst_n
+);
+
+generic_reg g_reg #(.T(logic[15:0]), .clk, .rst_n, .en, .d(16'BEEF), .q());
+
+
+endmodule
+// Type parameter also works on interfaces
+interface generic_if #(
+  parameter type T = logic[7:0]);
+
+  T data,
+  logic valid,
+  logic ready
+  clocking cb @(posedge clk);
+
+  endclocking
+  modport();
+endinterface
+
+// Exercise 
+module generic_eq #(
+  parameter type T = logic[7:0]
+)(
+  T a ,
+  T b,
+  logic match
+);
+assign match = (a == b);
+endmodule
+
+// top module
+module eq_top(
+  logic[7:0] a,b,
+  logic match
+);
+
+generic_eq my_eq (.a,.b,.match);
+generic_eq #(.T(logic[31:0])) my_32_eq(.a,.b.match);
+endmodule
